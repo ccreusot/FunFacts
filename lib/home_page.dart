@@ -25,37 +25,46 @@ class _HomePage extends State<HomePage> {
         appBar: AppBar(
           backgroundColor: Theme.of(context).canvasColor,
           elevation: 0,
+          leading: IconButton(icon: Icon(Icons.menu, color: Colors.black,), onPressed: () => {}),
         ),
         body: Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(32),
             child: Stack(
               children: <Widget>[
                 Container(
                   alignment: AlignmentDirectional.center,
-                    padding: const EdgeInsets.only(bottom: 32.0),
+                    padding: const EdgeInsets.only(bottom: 64.0),
                     child: Text(
                   "\"$fact\"",
                   style: TextStyle(
-                    fontSize: 24.0,
+                    fontSize: 28.0,
                     fontStyle: FontStyle.italic,
                   ),
                 )),
                 Container(
                   alignment: AlignmentDirectional.bottomCenter,
-                  padding: const EdgeInsets.only(bottom: 32.0),
-                  child:
-                  Row(
+                  padding: const EdgeInsets.only(bottom: 16.0),
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      IconButton(
-                        icon: Icon(Icons.refresh),
-                        iconSize: 64.0,
-                        onPressed: _reloadRandomFact,
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Container(
+                          decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.pink[300]),
+                          child: IconButton(
+                            icon: Icon(Icons.refresh),
+                            iconSize: 64.0,
+                            onPressed: _reloadRandomFact,
+                          ),
+                        ),
                       ),
-                      IconButton(
-                        icon: Icon(Icons.favorite_border),
-                        iconSize: 48.0,
-                        onPressed: () => {},
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: IconButton(
+                          icon: Icon(Icons.favorite_border),
+                          iconSize: 48.0,
+                          onPressed: () => {},
+                        ),
                       )
                     ],
                   )
