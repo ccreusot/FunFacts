@@ -40,7 +40,7 @@ class _FavoriteFacts extends State<FavoriteFacts> {
           return ListView.builder(
               padding: EdgeInsets.all(16.0),
               itemBuilder: (BuildContext context, int index) {
-                if (index < facts.length - 1) {
+                if (index <= facts.length - 1) {
                   return Container(
                     child: Text(
                       facts[index],
