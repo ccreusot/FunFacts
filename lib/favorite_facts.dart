@@ -23,6 +23,7 @@ class _FavoriteFacts extends State<FavoriteFacts> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).canvasColor,
+        title: Text("Favorite Facts", style: TextStyle(color: Colors.black),),
         elevation: 0,
         leading: IconButton(
             icon: Icon(
@@ -38,20 +39,44 @@ class _FavoriteFacts extends State<FavoriteFacts> {
           );
         } else {
           return ListView.builder(
-              padding: EdgeInsets.all(16.0),
               itemBuilder: (BuildContext context, int index) {
-                if (index <= facts.length - 1) {
-                  return Container(
-                    child: Text(
-                      facts[index],
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16,
-                      fontWeight: FontWeight.bold),
-                    ),
-                  );
-                }
-              });
+            if (index <= facts.length - 1) {
+              return ListTile(
+                contentPadding: const EdgeInsets.all(12.0),
+                leading: Container(
+                  padding: const EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                      color: Colors.blueGrey[100],
+                      borderRadius: BorderRadius.all(Radius.circular(4.0))),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          facts[index],
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.normal,
+                              fontStyle: FontStyle.italic),
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.share),
+                        color: Colors.black,
+                        onPressed: () => {},
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete),
+                        color: Colors.black,
+                        onPressed: () => {},
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+          });
         }
       }),
     );
