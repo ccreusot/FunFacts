@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:share/share.dart';
 
 class FavoriteFacts extends StatefulWidget {
   @override
@@ -42,7 +43,7 @@ class _FavoriteFacts extends State<FavoriteFacts> {
               itemBuilder: (BuildContext context, int index) {
             if (index <= facts.length - 1) {
               return ListTile(
-                contentPadding: const EdgeInsets.all(12.0),
+                contentPadding: const EdgeInsets.all(16.0),
                 leading: Container(
                   padding: const EdgeInsets.all(8.0),
                   decoration: BoxDecoration(
@@ -64,12 +65,12 @@ class _FavoriteFacts extends State<FavoriteFacts> {
                       IconButton(
                         icon: Icon(Icons.share),
                         color: Colors.black,
-                        onPressed: () => {},
+                        onPressed: () => _shareFact(index),
                       ),
                       IconButton(
                         icon: Icon(Icons.delete),
                         color: Colors.black,
-                        onPressed: () => {},
+                        onPressed: () => _removeFact(index),
                       ),
                     ],
                   ),
@@ -87,6 +88,20 @@ class _FavoriteFacts extends State<FavoriteFacts> {
       loading = true;
     });
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      loading = false;
+      facts = prefs.getStringList("favorite_facts") ?? List<String>();
+    });
+  }
+
+  void _shareFact(int index) async {
+    await Share.share(facts[index]);
+  }
+
+  void _removeFact(int index) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    facts.removeAt(index);
+    await prefs.setStringList("favorite_facts", facts);
     setState(() {
       loading = false;
       facts = prefs.getStringList("favorite_facts") ?? List<String>();
