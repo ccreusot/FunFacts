@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share/share.dart';
 
@@ -8,6 +9,17 @@ class FavoriteFacts extends StatefulWidget {
     return _FavoriteFacts();
   }
 }
+
+class ActionMenu {
+  const ActionMenu({this.title});
+
+  final String title;
+}
+
+const List<ActionMenu> actions = [
+  ActionMenu(title: "Partager"),
+  ActionMenu(title: "Effacer")
+];
 
 class _FavoriteFacts extends State<FavoriteFacts> {
   bool loading = false;
@@ -21,12 +33,22 @@ class _FavoriteFacts extends State<FavoriteFacts> {
 
   @override
   Widget build(BuildContext context) {
+    const CustomSemanticsAction semanticsShare =
+        CustomSemanticsAction.overridingAction(
+            hint: "ouvrir le menu actions", action: SemanticsAction.tap);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).canvasColor,
-        title: Text("Favorite Facts", style: TextStyle(color: Colors.black),),
+        title: MergeSemantics(
+          child: Text(
+            "Fact Favorite",
+            style: TextStyle(color: Colors.black),
+          ),
+        ),
         elevation: 0,
         leading: IconButton(
+            tooltip: "Ferme la page de favoris",
             icon: Icon(
               Icons.close,
               color: Colors.black,
@@ -35,49 +57,77 @@ class _FavoriteFacts extends State<FavoriteFacts> {
       ),
       body: Builder(builder: (BuildContext context) {
         if (loading) {
-          return Center(
-            child: Text("Chuck Norris te charge !"),
+          return Semantics(
+            liveRegion: true,
+            child: Center(
+              child: Text("Chargement des facts !"),
+            ),
           );
         } else {
-          return ListView.builder(
+          return ListView.separated(
+              separatorBuilder: (BuildContext context, int index) {
+                return Divider(
+                  color: Colors.black,
+                );
+              },
+              itemCount: facts.length,
               itemBuilder: (BuildContext context, int index) {
-            if (index <= facts.length - 1) {
-              return ListTile(
-                contentPadding: const EdgeInsets.all(16.0),
-                leading: Container(
-                  padding: const EdgeInsets.all(8.0),
-                  decoration: BoxDecoration(
-                      color: Colors.blueGrey[100],
-                      borderRadius: BorderRadius.all(Radius.circular(4.0))),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          facts[index],
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
-                              fontWeight: FontWeight.normal,
-                              fontStyle: FontStyle.italic),
-                        ),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.share),
-                        color: Colors.black,
-                        onPressed: () => _shareFact(index),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.delete),
-                        color: Colors.black,
-                        onPressed: () => _removeFact(index),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }
-          });
+                final GlobalKey _menuKey = GlobalKey();
+
+                final popupMenu = PopupMenuButton<ActionMenu>(
+                    key: _menuKey,
+                    padding: const EdgeInsets.all(16.0),
+                    itemBuilder: (BuildContext context) =>
+                        actions.map((ActionMenu action) {
+                          return PopupMenuItem<ActionMenu>(
+                            value: action,
+                            child: Text(action.title),
+                          );
+                        }).toList());
+
+                Map<CustomSemanticsAction, VoidCallback> customActions = {
+                  semanticsShare: () => {},
+                };
+
+                if (index <= facts.length - 1) {
+                  return Semantics(
+                    customSemanticsActions: customActions,
+                    onTap: () => {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return SimpleDialog(
+                                  title: Text("Actions"),
+                                  children: <Widget>[
+                                    FlatButton(
+                                      child: Text("Partager"),
+                                      onPressed: () {
+                                        _shareFact(index);
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                    FlatButton(
+                                      child: Text("Effacer"),
+                                      onPressed: () {
+                                        _removeFact(index);
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                    FlatButton(
+                                      child: Text("Annuler"),
+                                      onPressed: () => Navigator.of(context).pop(),
+                                    )
+                                  ],
+                                );
+                              })
+                        },
+                    child: ListTile(
+                      trailing: ExcludeSemantics(child: popupMenu),
+                      title: Text(facts[index]),
+                    ),
+                  );
+                }
+              });
         }
       }),
     );
