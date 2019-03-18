@@ -72,10 +72,8 @@ class _FavoriteFacts extends State<FavoriteFacts> {
               },
               itemCount: facts.length,
               itemBuilder: (BuildContext context, int index) {
-                final GlobalKey _menuKey = GlobalKey();
 
                 final popupMenu = PopupMenuButton<ActionMenu>(
-                    key: _menuKey,
                     padding: const EdgeInsets.all(16.0),
                     itemBuilder: (BuildContext context) =>
                         actions.map((ActionMenu action) {
