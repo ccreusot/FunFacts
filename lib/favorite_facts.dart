@@ -17,8 +17,8 @@ class ActionMenu {
 }
 
 const List<ActionMenu> actions = [
-  ActionMenu(title: "Partager"),
-  ActionMenu(title: "Effacer")
+  const ActionMenu(title: "Partager"),
+  const ActionMenu(title: "Effacer")
 ];
 
 class _FavoriteFacts extends State<FavoriteFacts> {
@@ -75,6 +75,13 @@ class _FavoriteFacts extends State<FavoriteFacts> {
 
                 final popupMenu = PopupMenuButton<ActionMenu>(
                     padding: const EdgeInsets.all(16.0),
+                    onSelected: (ActionMenu action) {
+                      if (action == actions[0]) {
+                          _shareFact(index);
+                      } else if (action == actions[1]) {
+                        _removeFact(index);
+                      }
+                    },
                     itemBuilder: (BuildContext context) =>
                         actions.map((ActionMenu action) {
                           return PopupMenuItem<ActionMenu>(
