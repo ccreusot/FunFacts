@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share/share.dart';
 
@@ -33,18 +32,13 @@ class _FavoriteFacts extends State<FavoriteFacts> {
 
   @override
   Widget build(BuildContext context) {
-    const CustomSemanticsAction semanticsShare =
-        CustomSemanticsAction.overridingAction(
-            hint: "ouvrir le menu actions", action: SemanticsAction.tap);
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).canvasColor,
-        title: MergeSemantics(
-          child: Text(
-            "Fact Favorite",
-            style: TextStyle(color: Colors.black),
-          ),
+        title: Text(
+          "Fact Favorite",
+          style: TextStyle(color: Colors.black),
         ),
         elevation: 0,
         leading: IconButton(
@@ -57,11 +51,8 @@ class _FavoriteFacts extends State<FavoriteFacts> {
       ),
       body: Builder(builder: (BuildContext context) {
         if (loading) {
-          return Semantics(
-            liveRegion: true,
-            child: Center(
-              child: Text("Chargement des facts !"),
-            ),
+          return Center(
+            child: Text("Chargement des facts !"),
           );
         } else {
           return ListView.separated(
@@ -90,46 +81,11 @@ class _FavoriteFacts extends State<FavoriteFacts> {
                           );
                         }).toList());
 
-                Map<CustomSemanticsAction, VoidCallback> customActions = {
-                  semanticsShare: () => {},
-                };
 
                 if (index <= facts.length - 1) {
-                  return Semantics(
-                    customSemanticsActions: customActions,
-                    onTap: () => {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return SimpleDialog(
-                                  title: Text("Actions"),
-                                  children: <Widget>[
-                                    FlatButton(
-                                      child: Text("Partager"),
-                                      onPressed: () {
-                                        _shareFact(index);
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                    FlatButton(
-                                      child: Text("Effacer"),
-                                      onPressed: () {
-                                        _removeFact(index);
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                    FlatButton(
-                                      child: Text("Annuler"),
-                                      onPressed: () => Navigator.of(context).pop(),
-                                    )
-                                  ],
-                                );
-                              })
-                        },
-                    child: ListTile(
-                      trailing: ExcludeSemantics(child: popupMenu),
-                      title: Text(facts[index]),
-                    ),
+                  return ListTile(
+                    trailing: popupMenu,
+                    title: Text(facts[index]),
                   );
                 }
               });
